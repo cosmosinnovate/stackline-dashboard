@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react"; // Importing real icons
-import { ProductData, Sale } from "../util/Product";
+import { ArrowUp, ArrowDown } from "lucide-react";
+import { Sale } from "../util/Product";
 
 interface SalesTableProps {
-    productData: ProductData;
+    sales: Sale[] | [];
 }
 
-const SalesTable: FC<SalesTableProps> = ({ productData }) => {
+const SalesTable: FC<SalesTableProps> = ({ sales }) => {
     const [sortColumn, setSortColumn] = useState<keyof Sale | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -19,12 +19,11 @@ const SalesTable: FC<SalesTableProps> = ({ productData }) => {
         }
     };
 
-    const sortedData = [...productData[0].sales].sort((a, b) => {
+    const sortedData = [...sales].sort((a, b) => {
         if (!sortColumn) return 0;
         const valA = a[sortColumn];
         const valB = b[sortColumn];
 
-        // Ensure proper sorting for numbers
         return sortDirection === "asc"
             ? (valA as number) - (valB as number)
             : (valB as number) - (valA as number);
