@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import SalesTable from './components/SalesTable';
 
 
 
@@ -408,43 +409,36 @@ const productData = [
       }
     ]
   }
-]
-
-const mockData = [
-  { month: 'JAN', retailSales: 348123, wholesaleSales: 255721 },
-  { month: 'FEB', retailSales: 300000, wholesaleSales: 215000 },
-  // Add data for other months...
-];
-
-const tableData = [
-  { week: '01-02-16', retail: 348123, wholesale: 255721, units: 887, margin: 123294 },
-  { week: '01-09-16', retail: 348123, wholesale: 255721, units: 887, margin: 123294 },
-  // Add more weeks...
 ];
 
 export default function App() {
   return (
-    <div className="flex-row min-h-screen flex w-full bg-gray-50 gap-4">
+    <div className="flex-row min-h-screen flex w-full bg-gray-50 gap-4 p-10">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white p-6 shadow-md h-full block">
+      <div className="w-1/4 bg-white shadow-md min-h-screen">
+      <div className="p-10 justify-center text-center">
         <img
-          src="https://m.media-amazon.com/images/I/71F0u6Z6eHL._AC_SL1500_.jpg"
+          src={productData[0].image}
           alt="Magic Bullet NutriBullet"
           className="w-full rounded-lg mb-4"
         />
         <h1 className="text-xl font-bold text-gray-800">{productData[0].title}</h1>
-        <p className="text-gray-600">{productData[0].details}</p>
-        <p className="text-gray-500">High-Speed Blender/Mixer System</p>
+        <p className="text-gray-600">{productData[0].subtitle}</p>
         <div className="flex flex-wrap gap-2 mt-4">
-          {['Pantry', 'Obsolete', 'Blender', 'Lightning Deal'].map((tag) => (
+          {productData[0].tags.map((tag) => (
             <span
               key={tag}
-              className="bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-full"
+              className="border border-gray-300 text-gray-600 text-sm px-3 py-1 rounded-md"
             >
               {tag}
             </span>
           ))}
         </div>
+        {/* Draw a line here */}
+
+        </div>
+        <hr className="border-gray-300" />
+
       </div>
 
       {/* Main Content */}
@@ -454,10 +448,9 @@ export default function App() {
           <h3 className="text-lg font-semibold mb-4">Retail Sales</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={mockData}>
+              <LineChart data={productData[0].sales}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="weekEnding" />
                 <Tooltip />
                 <Line type="monotone" dataKey="retailSales" stroke="#4680ff" strokeWidth={2} />
                 <Line type="monotone" dataKey="wholesaleSales" stroke="#a0aec0" strokeWidth={2} />
@@ -467,31 +460,7 @@ export default function App() {
         </div>
 
         {/* Sales Table */}
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h3 className="text-lg font-semibold mb-4">Sales Data</h3>
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b text-gray-600">
-                <th className="pb-2">Week Ending</th>
-                <th className="pb-2">Retail Sales</th>
-                <th className="pb-2">Wholesale Sales</th>
-                <th className="pb-2">Units Sold</th>
-                <th className="pb-2">Retailer Margin</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((row, index) => (
-                <tr key={index} className="border-b last:border-b-0">
-                  <td className="py-3">{row.week}</td>
-                  <td className="py-3">${row.retail.toLocaleString()}</td>
-                  <td className="py-3">${row.wholesale.toLocaleString()}</td>
-                  <td className="py-3">{row.units}</td>
-                  <td className="py-3">${row.margin.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <SalesTable productData={productData} />
       </div>
     </div>
   );
