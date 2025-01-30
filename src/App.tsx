@@ -1,4 +1,7 @@
-// import { useState } from 'react';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "./util/store";
+import { setProductData } from "./util/productSlice";
 import {
   LineChart,
   Line,
@@ -6,52 +9,45 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
-import SalesTable from './components/SalesTable';
-import { useEffect, useState } from 'react';
-import { Product } from './util/Product';
+} from "recharts";
+import SalesTable from "./components/SalesTable";
 
 export default function App() {
-  const [sortedData, setSortedData] = useState<Product>();
+  const dispatch = useDispatch<AppDispatch>();
+  const product = useSelector((state: RootState) => state.product.data);
 
-
-  // Load data like fetching from an API. 
   useEffect(() => {
-    fetch('data.json')
+    fetch("data.json")
       .then((response) => response.json())
       .then((data) => {
-        setSortedData(data[0]);
+        dispatch(setProductData(data[0]));
       });
-
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="flex-row min-h-screen flex w-full bg-gray-50 gap-4 p-10">
       {/* Sidebar */}
       <div className="w-1/4 bg-white shadow-md min-h-screen">
-      <div className="p-10 justify-center text-center">
-        <img
-          src={sortedData?.image}
-          alt="Magic Bullet NutriBullet"
-          className="w-full rounded-lg mb-4"
-        />
-        <h1 className="text-xl font-bold text-gray-800">{sortedData?.title}</h1>
-        <p className="text-gray-600">{sortedData?.subtitle}</p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {sortedData?.tags.map((tag) => (
-            <span
-              key={tag}
-              className="border border-gray-300 text-gray-600 text-sm px-3 py-1 rounded-md"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-        {/* Draw a line here */}
-
+        <div className="p-10 justify-center text-center">
+          <img
+            src={product?.image}
+            alt={product?.title}
+            className="w-full rounded-lg mb-4"
+          />
+          <h1 className="text-xl font-bold text-gray-800">{product?.title}</h1>
+          <p className="text-gray-600">{product?.subtitle}</p>
+          <div className="flex flex-wrap gap-2 mt-4">
+            {product?.tags.map((tag) => (
+              <span
+                key={tag}
+                className="border border-gray-300 text-gray-600 text-sm px-3 py-1 rounded-md"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
         <hr className="border-gray-300" />
-
       </div>
 
       {/* Main Content */}
@@ -61,7 +57,7 @@ export default function App() {
           <h3 className="text-lg font-semibold mb-4">Retail Sales</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sortedData?.sales}>
+              <LineChart data={product?.sales}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="weekEnding" />
                 <Tooltip />
@@ -73,7 +69,7 @@ export default function App() {
         </div>
 
         {/* Sales Table */}
-        <SalesTable sales={sortedData?.sales || []} />
+        <SalesTable sales={product?.sales || []} />
       </div>
     </div>
   );
